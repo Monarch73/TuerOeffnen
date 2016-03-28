@@ -1,9 +1,8 @@
 package local.de.monarch.tueroeffnen;
 
+import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
-import android.view.TextureView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -41,7 +40,7 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         String md5devId = this.md5(this.deviceId);
         HttpClient httpclient = new DefaultHttpClient();
         try {
-            HttpResponse response = httpclient.execute(new HttpGet("http://www.monarch.de?code=" + md5Code + "&devId="+md5devId));
+            HttpResponse response = httpclient.execute(new HttpGet("http://www.monarch.de/tuer.php?code=" + md5Code + "&devId="+md5devId));
             StatusLine statusLine = response.getStatusLine();
             if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
