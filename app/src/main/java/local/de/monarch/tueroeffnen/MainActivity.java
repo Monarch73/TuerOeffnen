@@ -18,6 +18,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends ActionBarActivity implements View.OnClickListener {
 
@@ -38,27 +39,23 @@ public class MainActivity extends ActionBarActivity implements View.OnClickListe
         String code= this.code.getText().toString();
         String md5Code = this.md5(code);
         String md5devId = this.md5(this.deviceId);
-        HttpClient httpclient = new DefaultHttpClient();
+
+        Transponder t1 = new Transponder();
+        t1.execute(md5Code, md5devId);
         try {
-            HttpResponse response = httpclient.execute(new HttpGet("http://www.monarch.de/tuer.php?code=" + md5Code + "&devId="+md5devId));
-            StatusLine statusLine = response.getStatusLine();
-            if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
-                ByteArrayOutputStream out = new ByteArrayOutputStream();
-                response.getEntity().writeTo(out);
-                String responseString = out.toString();
-                out.close();
-                //..more logic
-            } else {
-                //Closes the connection.
-                response.getEntity().getContent().close();
-                throw new IOException(statusLine.getReasonPhrase());
+            String result = t1.get();
+            if (result!=null)
+            {
+                TextView text1 = (TextView)findViewById(R.id.textViewStatus);
+                text1.setText("Ergebnis:" + result);
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        catch (Exception ex)
-        {
-            TextView status = (TextView)findViewById(R.id.textViewStatus);
-            status.setText("Fehler: "+ ex.getMessage());
-        }
+
+
+
+
     }
 
     private String md5(final String s) {
